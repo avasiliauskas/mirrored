@@ -2,12 +2,28 @@
 
 namespace App\Controller;
 
+use App\Service\UserService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserController
+class UserController extends AbstractController
 {
-    public function addUser()
+    private UserService $service;
+
+    public function __construct(UserService $service)
     {
-        return new Response('adding user...');
+        $this->service = $service;
+    }
+
+    public function addUser(Request $request)
+    {
+        $this->service->create($request->get('name'), $request->get('password'));
+        return $this->json('user created');
+    }
+
+    public function getUsers()
+    {
+        return $this->json($this->service->all());
     }
 }
