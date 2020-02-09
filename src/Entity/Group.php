@@ -58,6 +58,26 @@ class Group implements JsonSerializable
         return $this->users;
     }
 
+    public function assignUser(User $user)
+    {
+        if ($this->getUsers()->contains($user)) {
+            return;
+        }
+
+        $this->getUsers()->add($user);
+        $user->assignGroup($this);
+    }
+
+    public function removeUser(User $user)
+    {
+        if (!$this->getUsers()->contains($user)) {
+            return;
+        }
+
+        $this->getUsers()->removeElement($user);
+        $user->removeGroup($this);
+    }
+
     public function jsonSerialize()
     {
         return [

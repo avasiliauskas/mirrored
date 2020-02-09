@@ -15,27 +15,27 @@ class GroupController extends AbstractController
         $this->service = $service;
     }
 
-    public function createGroup(Request $request)
+    public function create(Request $request)
     {
         $this->service->create($request->get('name'));
         return $this->json('created');
     }
 
-    public function deleteGroup(int $id)
+    public function delete(int $id)
     {
         $this->service->delete($id);
         return $this->json('deleted');
     }
 
-    public function assignUserToGroup(int $userId)
+    public function assignUser(Request $request)
     {
-        $this->service->assignUser($userId);
+        $this->service->assignUser($request->get('userId'), $request->get('groupId'));
         return $this->json('success');
     }
 
-    public function removeUserFromGroup(int $userId)
+    public function removeUser(Request $request)
     {
-        $this->service->removeUser($userId);
+        $this->service->removeUser($request->get('userId'), $request->get('groupId'));
         return $this->json('success');
     }
 

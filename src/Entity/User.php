@@ -13,6 +13,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, JsonSerializable
 {
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -80,7 +83,7 @@ class User implements UserInterface, JsonSerializable
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = self::ROLE_USER;
 
         return array_unique($roles);
     }
@@ -112,6 +115,26 @@ class User implements UserInterface, JsonSerializable
         return $this->groups;
     }
 
+    public function assignGroup(Group $group)
+    {
+        if ($this->getGroups()->contains($group)) {
+            return;
+        }
+
+        $this->getGroups()->add($group);
+        $group->assignUser($this);
+    }
+
+    public function removeGroup(Group $group)
+    {
+        if (!$this->getGroups()->contains($group)) {
+            return;
+        }
+
+        $this->getGroups()->removeElement($group);
+        $group->removeUser($this);
+    }
+
     /**
      * @see UserInterface
      */
@@ -134,6 +157,7 @@ class User implements UserInterface, JsonSerializable
         return [
             "id" => $this->getId(),
             "name" => $this->getName(),
+            "roles" => $this->getRoles()
         ];
     }
 }

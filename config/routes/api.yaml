@@ -10,10 +10,25 @@ get_users:
 
 create_group:
   path: /group
-  controller: App\Controller\GroupController::createGroup
+  controller: App\Controller\GroupController::create
   methods: POST
+
+delete_group:
+  path: /group
+  controller: App\Controller\GroupController::delete
+  methods: DELETE
 
 get_groups:
   path: /group
   controller: App\Controller\GroupController::getGroups
   methods: GET
+
+assign_user_to_group:
+  path: /group/assign
+  controller: App\Controller\GroupController::assignUser
+  methods: POST
+
+remove_user_from_group:
+  path: /group/remove
+  controller: App\Controller\GroupController::removeUser
+  methods: POST
