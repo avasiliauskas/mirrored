@@ -30,7 +30,7 @@ final class GroupService
     {
         $group = $this->repository->find($id);
 
-        $this->repository->delete($group);
+//        $this->repository->delete($group);
 
         return true;
     }

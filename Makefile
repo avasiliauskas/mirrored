@@ -3,5 +3,7 @@ migrate:
 	php bin/console doctrine:migrations:migrate
 seed:
 	php bin/console doctrine:fixtures:load
-debug-routes:
+routes:
 	php bin/console debug:router
+test:
+	./bin/phpunit

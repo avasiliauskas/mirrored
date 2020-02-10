@@ -21,16 +21,6 @@ security:
                 password_path: password
             logout:
                 path: logout
-
-            anonymous: lazy
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+            anonymous: ~
     access_control:
-#         - { path: ^/api, roles: ROLE_ADMIN } TODO
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/api, roles: ROLE_ADMIN }
