@@ -5,81 +5,125 @@ use App\Tests\ApiTestCase;
 
 class GroupApiTest extends ApiTestCase
 {
-//    public function testCreateGroup()
-//    {
-//        self::$client->request('POST', '/api/v1/group', ['name' => 'group_name']);
-//        $this->assertEquals(200, self::$client->getResponse()->getStatusCode());
-//
-//        $group = self::$client->getContainer()
-//            ->get('doctrine.orm.entity_manager')
-//            ->getRepository(Group::class)
-//            ->findByName('group_name');
-//
-//        $this->assertNotNull($group);
-//    }
-//
-//    public function testDeleteGroup()
-//    {
-//        $group = self::createTestGroup('test_group');
-//
-//        self::$client->request('DELETE', '/api/v1/group', ['id' => $group->getId()]);
-//        $this->assertEquals(200, self::$client->getResponse()->getStatusCode());
-//
-//        $group = self::$client->getContainer()
-//            ->get('doctrine.orm.entity_manager')
-//            ->getRepository(Group::class)
-//            ->find($group->getId());
-//
-////        $this->assertNull($group); TODO
-//    }
-//
-//    public function testGetGroups()
-//    {
-//        self::createTestGroup('test_group_1');
-//
-//        self::$client->request('GET', '/api/v1/group');
-//        $this->assertEquals(200, self::$client->getResponse()->getStatusCode());
-//
-//        $this->assertCount(1, json_decode(self::$client->getResponse()->getContent()));
-//    }
-//
-//    public function testAssignUserToGroup()
-//    {
-//        // TODO
-//    }
-//
-//    public function testRemoveUserFromGroup()
-//    {
-//        // TODO
-//    }
-//
-//    public function testCreateGroupUnauthorized()
-//    {
-//        self::$client->request('POST', '/api/v1/group');
-//        $this->assertEquals(401, self::$client->getResponse()->getStatusCode());
-//    }
-//
-//    public function testDeleteGroupUnauthorized()
-//    {
-//        self::$client->request('DELETE', '/api/v1/group');
-//        $this->assertEquals(401, self::$client->getResponse()->getStatusCode());
-//    }
-//
-//    public function testGetGroupsUnauthorized()
-//    {
-//        self::$client->request('GET', '/api/v1/group');
-//        $this->assertEquals(401, self::$client->getResponse()->getStatusCode());
-//    }
-//
-//    public function testAssignUserToGroupUnauthorized()
-//    {
-//        self::$client->request('POST', '/api/v1/group/assign');
-//        $this->assertEquals(401, self::$client->getResponse()->getStatusCode());
-//    }
-//
-//    public function testRemoveUserFromGroupUnauthorized()
-//    {
-//        self::$client->request('POST', '/api/v1/group/remove');
-//        $this->assertEquals(401, self::$client->getResponse()->getStatusCode());
-//    }
+    public function testGetGroups()
+    {
+        $this->createTestGroup('test_group_1');
+        $this->createTestGroup('test_group_2');
+        $this->createTestGroup('test_group_3');
+
+        $this->client->request('GET', '/api/v1/group');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertCount(3, json_decode($this->client->getResponse()->getContent()));
+    }
+
+    public function testCreateGroup()
+    {
+        $this->client->request('POST', '/api/v1/group', ['name' => 'group_name']);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $group = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->findByName('group_name');
+
+        $this->assertNotNull($group);
+    }
+
+    public function testDeleteGroup()
+    {
+        $group = $this->createTestGroup('test_group');
+
+        $this->client->request('DELETE', '/api/v1/group', ['id' => $group->getId()]);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $group = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->find($group->getId());
+
+        $this->assertNull($group);
+    }
+
+    public function testAssignUserToGroup()
+    {
+        $group = $this->createTestGroup('test_group');
+        $user = $this->createTestUser('user', 'password');
+        $user2 = $this->createTestUser('user2', 'password');
+
+        $this->client->request('POST', '/api/v1/group/assign',
+            [
+                'userName' => $user->getName(),
+                'groupName' => $group->getName()
+            ]
+        );
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $userList = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->findOneByName('test_group')
+            ->getUsers()
+            ->toArray();
+
+        $this->assertCount(1, $userList);
+
+        $this->client->request('POST', '/api/v1/group/assign',
+            [
+                'userName' => $user2->getName(),
+                'groupName' => $group->getName()
+            ]
+        );
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $userList2 = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->findOneByName('test_group')
+            ->getUsers()
+            ->toArray();
+
+        $this->assertCount(2, $userList2);
+    }
+
+    public function testRemoveUserFromGroup()
+    {
+        $group = $this->createTestGroup('test_group');
+        $user = $this->createTestUser('user', 'password');
+        $user2 = $this->createTestUser('user2', 'password');
+
+        $group->assignUser($user);
+        $group->assignUser($user2);
+
+        $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->commit($group);
+
+        $this->client->request('POST', '/api/v1/group/remove',
+            [
+                'userName' => $user->getName(),
+                'groupName' => $group->getName()
+            ]
+        );
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $userList = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->findOneByName('test_group')
+            ->getUsers()
+            ->toArray();
+
+        $this->assertCount(1, $userList);
+
+        $this->client->request('POST', '/api/v1/group/remove',
+            [
+                'userName' => $user2->getName(),
+                'groupName' => $group->getName()
+            ]
+        );
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $userList = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->findOneByName('test_group')
+            ->getUsers()
+            ->toArray();
+
+        $this->assertCount(0, $userList);
+    }
 }

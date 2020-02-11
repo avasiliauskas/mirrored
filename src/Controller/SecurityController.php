@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class SecurityController
+class SecurityController extends AbstractController
 {
     public function login()
     {
-        return new Response('You are logged in!');
+        return $this->json([
+                'user' => $this->getUser() ? $this->getUser()->getId() : null
+            ]
+        );
     }
 }

@@ -31,7 +31,7 @@ final class UserService
             $password
         ));
 
-        $this->repository->create($user);
+        $this->repository->commit($user);
 
         return true;
     }

@@ -4,44 +4,52 @@ namespace App\Service;
 
 use App\Entity\Group;
 use App\Repository\GroupRepository;
+use App\Repository\UserRepository;
 
 final class GroupService
 {
-    private GroupRepository $repository;
+    private GroupRepository $groupRepository;
+    private UserRepository $userRepository;
 
-    public function __construct(GroupRepository $repository)
+    public function __construct(GroupRepository $groupRepository, UserRepository $userRepository)
     {
-        $this->repository = $repository;
+        $this->groupRepository = $groupRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function all()
     {
-        return $this->repository->findAll();
+        return $this->groupRepository->findAll();
     }
 
     public function create(string $name)
     {
         $group = new Group();
         $group->setName($name);
-        $this->repository->create($group);
+        $this->groupRepository->commit($group);
     }
 
     public function delete(int $id)
     {
-        $group = $this->repository->find($id);
-
-//        $this->repository->delete($group);
-
-        return true;
+        $group = $this->groupRepository->find($id);
+        $this->groupRepository->delete($group);
     }
 
-    public function assignUser(int $userId, int $groupId)
+    public function assignUser(string $userName, string $groupName)
     {
-        // TODo
+        $group = $this->groupRepository->findOneBy(['name' => $groupName]);
+        $user = $this->userRepository->findOneBy(['name' => $userName]);
+
+        $group->assignUser($user);
+        $this->groupRepository->commit($group);
     }
 
-    public function removeUser(int $userId, int $groupId)
+    public function removeUser(string $userName, string $groupName)
     {
-        // TODO
+        $group = $this->groupRepository->findOneBy(['name' => $groupName]);
+        $user = $this->userRepository->findOneBy(['name' => $userName]);
+
+        $group->removeUser($user);
+        $this->groupRepository->commit($group);
     }
 }

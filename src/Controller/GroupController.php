@@ -34,13 +34,13 @@ class GroupController extends AbstractController
 
     public function assignUser(Request $request)
     {
-        $this->service->assignUser($request->get('userId'), $request->get('groupId'));
+        $this->service->assignUser($request->get('userName'), $request->get('groupName'));
         return $this->json('success');
     }
 
     public function removeUser(Request $request)
     {
-        $this->service->removeUser($request->get('userId'), $request->get('groupId'));
+        $this->service->removeUser($request->get('userName'), $request->get('groupName'));
         return $this->json('success');
     }
 }

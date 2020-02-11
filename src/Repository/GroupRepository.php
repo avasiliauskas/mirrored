@@ -23,14 +23,15 @@ class GroupRepository extends ServiceEntityRepository
         $this->entityManager = $entityManager;
     }
 
-    public function create(Group $userGroup)
+    public function commit(Group $group)
     {
-        $this->entityManager->persist($userGroup);
+        $this->entityManager->persist($group);
         $this->entityManager->flush();
     }
 
-    public function delete(int $id)
+    public function delete(Group $group)
     {
-        return true; //TODO
+        $this->entityManager->remove($group);
+        $this->entityManager->flush();
     }
 }

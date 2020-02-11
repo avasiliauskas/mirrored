@@ -4,80 +4,45 @@ namespace App\Tests;
 
 use App\Entity\Group;
 use App\Entity\User;
-use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\RequestOptions;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ApiTestCase extends WebTestCase
 {
-    protected static KernelBrowser $client;
+    protected KernelBrowser $client;
 
-//    public function setUp(): void
-//    {
-//        parent::setUp();
-//
-//        if (null === self::$user) {
-//            self::$user = static::createClient();
-//            self::$user->insulate();
-//
-//            self::createTestUser('admin', 'password', User::ROLE_ADMIN);
-//        }
-//
-//        if (null === self::$client) {
-//            self::$client = static::createClient([],
-//                [
-//                    'PHP_AUTH_USER' => 'admin',
-//                    'PHP_AUTH_PW' => 'password',
-//                ]
-//            );
-//        }
-//    }
-
-    protected function setAdminClient()
+    protected function setUp()
     {
-        self::$client = static::createClient();
-        self::createTestUser('admin', 'password', User::ROLE_ADMIN);
+        $this->client = self::createClient();
+        $this->createUserAndLogIn($this->client);
+    }
 
+    protected function createUserAndLogin(KernelBrowser $client)
+    {
+        $this->createTestUser('admin', 'password', User::ROLE_ADMIN);
 
-        $client = new Client();
-
-        $response = $client->post('http://user-api.test/login', [
-            RequestOptions::JSON => ['name' => 'admin', 'password' => 'password']
-        ]);
-
-        dump($response->getHeaders()['Set-Cookie']);
-
-        $jar = CookieJar::fromArray(
-            [
-                'PHPSESSID' => '5289kln1sicc6te5cnv4htj90j',
-            ],
-            'user-api.test'
+        $client->request(
+            'POST',
+            '/login',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"name":"admin", "password":"password"}'
         );
 
-        $response = $client->get('http://user-api.test/api/v1/user', ['cookie' => $jar]);
-
-        dump($response->getStatusCode());
-
+        $this->assertResponseStatusCodeSame(200);
     }
 
-    protected function setGuestClient()
-    {
-        self::$client = static::createClient();
-    }
-
-    protected function createTestUser(string $name, string $password, string $role): User
+    protected function createTestUser(string $name, string $password, string $role = User::ROLE_USER): User
     {
         $user = new User();
         $user->setName($name);
-        $user->setPassword($password);
+        $user->setPassword($this->getService('security.password_encoder')->encodePassword($user, $password));
         $user->setRoles([$role]);
 
-        self::$client->getContainer()
-            ->get('doctrine.orm.entity_manager')
+        $this->getEntityManager()
             ->getRepository(User::class)
-            ->create($user);
+            ->commit($user);
 
         return $user;
     }
@@ -87,12 +52,20 @@ class ApiTestCase extends WebTestCase
         $group = new Group();
         $group->setName($name);
 
-        self::$client->getContainer()
-            ->get('doctrine.orm.entity_manager')
+        $this->getEntityManager()
             ->getRepository(Group::class)
-            ->create($group);
+            ->commit($group);
 
         return $group;
     }
 
+    protected function getService($id)
+    {
+        return self::$kernel->getContainer()->get($id);
+    }
+
+    protected function getEntityManager()
+    {
+        return $this->getService('doctrine.orm.entity_manager');
+    }
 }
