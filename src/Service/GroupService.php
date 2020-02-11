@@ -32,6 +32,11 @@ final class GroupService
     public function delete(int $id)
     {
         $group = $this->groupRepository->find($id);
+
+        if ($group->getUsers()->count()) {
+            return;
+        }
+
         $this->groupRepository->delete($group);
     }
 

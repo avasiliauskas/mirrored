@@ -42,6 +42,26 @@ class GroupApiTest extends ApiTestCase
         $this->assertNull($group);
     }
 
+    public function testDeleteGroupWithUsers()
+    {
+        $group = $this->createTestGroup('test_group');
+        $user = $this->createTestUser('user', 'password');
+
+        $group->assignUser($user);
+        $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->commit($group);
+
+        $this->client->request('DELETE', '/api/v1/group', ['id' => $group->getId()]);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $group = $this->getEntityManager()
+            ->getRepository(Group::class)
+            ->find($group->getId());
+
+        $this->assertNotNull($group);
+    }
+
     public function testAssignUserToGroup()
     {
         $group = $this->createTestGroup('test_group');
