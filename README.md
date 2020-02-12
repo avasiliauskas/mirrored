@@ -38,7 +38,7 @@ Run these commands
 * make migrate-test
 * make test
 
-##Possible improvements:
+## Possible improvements:
 
 * Improve validation for duplicate entries. Symfony doesn't have unique entry support for non entity validation.
 Could have used form validator.
