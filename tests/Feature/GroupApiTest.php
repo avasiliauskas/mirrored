@@ -19,7 +19,7 @@ class GroupApiTest extends ApiTestCase
     public function testCreateGroup()
     {
         $this->client->request('POST', '/api/v1/group', ['name' => 'group_name']);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
 
         $group = $this->getEntityManager()
             ->getRepository(Group::class)
@@ -32,8 +32,8 @@ class GroupApiTest extends ApiTestCase
     {
         $group = $this->createTestGroup('test_group');
 
-        $this->client->request('DELETE', '/api/v1/group', ['id' => $group->getId()]);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->client->request('DELETE', '/api/v1/group', ['name' => $group->getName()]);
+        $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
 
         $group = $this->getEntityManager()
             ->getRepository(Group::class)
@@ -52,8 +52,8 @@ class GroupApiTest extends ApiTestCase
             ->getRepository(Group::class)
             ->commit($group);
 
-        $this->client->request('DELETE', '/api/v1/group', ['id' => $group->getId()]);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->client->request('DELETE', '/api/v1/group', ['name' => $group->getName()]);
+        $this->assertEquals(422, $this->client->getResponse()->getStatusCode());
 
         $group = $this->getEntityManager()
             ->getRepository(Group::class)

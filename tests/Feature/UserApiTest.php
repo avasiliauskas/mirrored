@@ -24,7 +24,7 @@ class UserApiTest extends ApiTestCase
         ];
 
         $this->client->request('POST', '/api/v1/user', $data);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
 
         $user = $this->getEntityManager()
             ->getRepository(User::class)

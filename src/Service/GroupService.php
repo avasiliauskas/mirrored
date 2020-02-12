@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Group;
+use App\Exception\ApiException;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
 
@@ -29,12 +30,12 @@ final class GroupService
         $this->groupRepository->commit($group);
     }
 
-    public function delete(int $id)
+    public function delete(string $name)
     {
-        $group = $this->groupRepository->find($id);
+        $group = $this->groupRepository->findOneBy(['name' => $name]);
 
-        if ($group->getUsers()->count()) {
-            return;
+        if ($group && $group->getUsers()->count()) {
+            throw new ApiException([], 422, 'validation error');
         }
 
         $this->groupRepository->delete($group);

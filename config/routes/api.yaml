@@ -1,34 +1,34 @@
 add_user:
   path: /user
-  controller: App\Controller\UserController::addUser
+  controller: App\Controller\Api\UserController::create
   methods: POST
 
 get_users:
   path: /user
-  controller: App\Controller\UserController::getUsers
+  controller: App\Controller\Api\UserController::all
   methods: GET
 
 create_group:
   path: /group
-  controller: App\Controller\GroupController::create
+  controller: App\Controller\Api\GroupController::create
   methods: POST
 
 delete_group:
   path: /group
-  controller: App\Controller\GroupController::delete
+  controller: App\Controller\Api\GroupController::delete
   methods: DELETE
 
 get_groups:
   path: /group
-  controller: App\Controller\GroupController::getGroups
+  controller: App\Controller\Api\GroupController::all
   methods: GET
 
 assign_user_to_group:
   path: /group/assign
-  controller: App\Controller\GroupController::assignUser
+  controller: App\Controller\Api\GroupController::assignUser
   methods: POST
 
 remove_user_from_group:
   path: /group/remove
-  controller: App\Controller\GroupController::removeUser
+  controller: App\Controller\Api\GroupController::removeUser
   methods: POST

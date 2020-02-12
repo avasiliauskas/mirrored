@@ -8,9 +8,6 @@ class SecurityController extends AbstractController
 {
     public function login()
     {
-        return $this->json([
-                'user' => $this->getUser() ? $this->getUser()->getId() : null
-            ]
-        );
+        return $this->json($this->getUser() ? 'You are logged in!' : 'You are not logged in...');
     }
 }

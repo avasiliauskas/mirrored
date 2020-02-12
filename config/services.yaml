@@ -22,12 +22,15 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
-
     App\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-    App\Serializer\FormExceptionNormalizer:
+    App\Serializer\ApiExceptionNormalizer:
         tags: ['serializer.normalizer']
     App\Factory\NormalizerFactory:
         arguments: [!tagged serializer.normalizer]
         public: true
+    App\Validator\UniqueValueInEntityValidator:
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator }
