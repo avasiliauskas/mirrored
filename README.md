@@ -40,9 +40,8 @@ Run these commands
 
 ## Possible improvements:
 
-* Improve validation for duplicate entries. Symfony doesn't have unique entry support for non entity validation.
-Could have used form validator.
 * Use behat for feature tests.
 * Add unit tests (possibly phpspec).
 * Use tools for better API documentation (ex. Swagger).
 * Cache Group list and User list, invalidate it on each update.
+* Overall project polish, it's always possible to make it better :)
