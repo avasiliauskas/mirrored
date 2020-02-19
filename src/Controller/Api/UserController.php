@@ -2,33 +2,25 @@
 
 namespace App\Controller\Api;
 
-use App\Service\UserService;
+use App\Action\CreateUser;
+use App\Action\GetUsers;
 use App\Constraint\AddUserConstraints;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends BaseController
 {
-    private UserService $service;
-
-    public function __construct(UserService $service, ValidatorInterface $validator)
-    {
-        parent::__construct($validator);
-        $this->service = $service;
-    }
-
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, CreateUser $action): JsonResponse
     {
         $this->validateRequest($request->request->all(), AddUserConstraints::getConstraints());
 
-        $this->service->create($request->get('name'), $request->get('password'));
+        $action->execute($request->get('name'), $request->get('password'));
         return $this->json('User created!', 201);
     }
 
-    public function all(): JsonResponse
+    public function all(GetUsers $action): JsonResponse
     {
-        return $this->json($this->service->all());
+        return $this->json($action->execute());
     }
 
 }
