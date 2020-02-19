@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Constraint;
 
@@ -12,7 +12,7 @@ class AddGroupConstraints implements ConstraintContract
      * @Assert\NotBlank(message="Name is missing")
      * @UniqueAssert(entityClass=Group::class, field="name")
      */
-    public $name;
+    public string $name;
 
     public function __construct($name)
     {

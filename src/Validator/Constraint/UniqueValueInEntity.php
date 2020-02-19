@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Validator\Constraint;
 
@@ -10,21 +10,21 @@ use Symfony\Component\Validator\Constraint;
  */
 class UniqueValueInEntity extends Constraint
 {
-    public $message = 'This value is already in use';
-    public $entityClass;
-    public $field;
+    public string $message = 'This value is already in use';
+    public string $entityClass;
+    public string $field;
 
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return ['entityClass', 'field'];
     }
 
-    public function getTargets()
+    public function getTargets(): string
     {
         return self::PROPERTY_CONSTRAINT;
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return UniqueValueInEntityValidator::class;
     }

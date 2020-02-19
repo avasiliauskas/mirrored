@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Exception;
 
@@ -7,12 +7,12 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ApiException extends HttpException
 {
-    private $violations;
+    private ?ConstraintViolationListInterface $violations;
     const VALIDATION_ERROR_TYPE = 'validation_error';
     const UNIQUE_VALIDATION_ERROR_MESSAGE = 'Unique constrain violation';
 
     public function __construct(
-        $violations = [],
+        ?ConstraintViolationListInterface $violations,
         int $statusCode = 400,
         string $message = null,
         \Exception $previous = null,
@@ -24,7 +24,7 @@ class ApiException extends HttpException
         $this->violations = $violations;
     }
 
-    public function getErrors()
+    public function getErrors(): array
     {
         $errors = [];
 

@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository;
 
 use App\Entity\Group;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @method Group|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,23 +14,20 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class GroupRepository extends ServiceEntityRepository
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Group::class);
-        $this->entityManager = $entityManager;
     }
 
-    public function commit(Group $group)
+    public function commit(Group $group): void
     {
-        $this->entityManager->persist($group);
-        $this->entityManager->flush();
+        $this->_em->persist($group);
+        $this->_em->flush();
     }
 
-    public function delete(Group $group)
+    public function delete(Group $group): void
     {
-        $this->entityManager->remove($group);
-        $this->entityManager->flush();
+        $this->_em->remove($group);
+        $this->_em->flush();
     }
 }

@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,32 +54,32 @@ class Group implements JsonSerializable
         return $this;
     }
 
-    public function getUsers()
+    public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function assignUser(User $user)
-    {
-        if ($this->getUsers()->contains($user)) {
-            return;
-        }
-
-        $this->getUsers()->add($user);
-        $user->assignGroup($this);
-    }
-
-    public function removeUser(User $user)
+    public function assignUser(User $user): self
     {
         if (!$this->getUsers()->contains($user)) {
-            return;
+            $this->getUsers()->add($user);
+            $user->assignGroup($this);
         }
 
-        $this->getUsers()->removeElement($user);
-        $user->removeGroup($this);
+        return $this;
     }
 
-    public function jsonSerialize()
+    public function removeUser(User $user): self
+    {
+        if ($this->getUsers()->contains($user)) {
+            $this->getUsers()->removeElement($user);
+            $user->removeGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),

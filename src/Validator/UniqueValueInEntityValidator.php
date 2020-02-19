@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Validator;
 
@@ -9,14 +9,14 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class UniqueValueInEntityValidator extends ConstraintValidator
 {
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         $entityRepository = $this->em->getRepository($constraint->entityClass);
 

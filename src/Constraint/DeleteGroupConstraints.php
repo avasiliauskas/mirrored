@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Constraint;
 
@@ -9,7 +9,7 @@ class DeleteGroupConstraints implements ConstraintContract
     /**
      * @Assert\NotBlank(message="Name is missing")
      */
-    public $name;
+    public string $name;
 
     public function __construct($name)
     {

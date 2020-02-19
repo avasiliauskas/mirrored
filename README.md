@@ -7,9 +7,14 @@ Exception handling was inspired by [this article](https://medium.com/@ideneal/sy
 Unique validator was inspired by [this post](https://stackoverflow.com/questions/44199711/use-uniqueentity-outside-of-entity-and-without-forms)
 .
 
+## Requirements
+
+* PHP 7.4
+* MySQL 5.7
+
 ## Setup
 
-* Setup local server with mysql57
+* Setup server
 * Edit .env
 * composer install
 * make seed

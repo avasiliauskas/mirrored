@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -17,12 +17,12 @@ final class UserService
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function all()
+    public function all(): iterable
     {
         return $this->repository->findAll();
     }
 
-    public function create(string $name, string $password)
+    public function create(string $name, string $password): void
     {
         $user = new User();
         $user->setName($name);
@@ -32,8 +32,6 @@ final class UserService
         ));
 
         $this->repository->commit($user);
-
-        return true;
     }
 
 }

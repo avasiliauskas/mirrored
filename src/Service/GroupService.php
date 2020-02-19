@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -18,30 +18,30 @@ final class GroupService
         $this->userRepository = $userRepository;
     }
 
-    public function all()
+    public function all(): iterable
     {
         return $this->groupRepository->findAll();
     }
 
-    public function create(string $name)
+    public function create(string $name): void
     {
         $group = new Group();
         $group->setName($name);
         $this->groupRepository->commit($group);
     }
 
-    public function delete(string $name)
+    public function delete(string $name): void
     {
         $group = $this->groupRepository->findOneBy(['name' => $name]);
 
         if ($group && $group->getUsers()->count()) {
-            throw new ApiException([], 422, 'validation error');
+            throw new ApiException(null, 422, ApiException::UNIQUE_VALIDATION_ERROR_MESSAGE);
         }
 
         $this->groupRepository->delete($group);
     }
 
-    public function assignUser(string $userName, string $groupName)
+    public function assignUser(string $userName, string $groupName): void
     {
         $group = $this->groupRepository->findOneBy(['name' => $groupName]);
         $user = $this->userRepository->findOneBy(['name' => $userName]);
@@ -50,7 +50,7 @@ final class GroupService
         $this->groupRepository->commit($group);
     }
 
-    public function removeUser(string $userName, string $groupName)
+    public function removeUser(string $userName, string $groupName): void
     {
         $group = $this->groupRepository->findOneBy(['name' => $groupName]);
         $user = $this->userRepository->findOneBy(['name' => $userName]);

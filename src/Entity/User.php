@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -110,29 +110,29 @@ class User implements UserInterface, JsonSerializable
         return $this;
     }
 
-    public function getGroups()
+    public function getGroups(): Collection
     {
         return $this->groups;
     }
 
-    public function assignGroup(Group $group)
-    {
-        if ($this->getGroups()->contains($group)) {
-            return;
-        }
-
-        $this->getGroups()->add($group);
-        $group->assignUser($this);
-    }
-
-    public function removeGroup(Group $group)
+    public function assignGroup(Group $group): self
     {
         if (!$this->getGroups()->contains($group)) {
-            return;
+            $this->getGroups()->add($group);
+            $group->assignUser($this);
         }
 
-        $this->getGroups()->removeElement($group);
-        $group->removeUser($this);
+        return $this;
+    }
+
+    public function removeGroup(Group $group): self
+    {
+        if ($this->getGroups()->contains($group)) {
+            $this->getGroups()->removeElement($group);
+            $group->removeUser($this);
+        }
+
+        return $this;
     }
 
     /**
@@ -152,7 +152,7 @@ class User implements UserInterface, JsonSerializable
         // $this->plainPassword = null;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             "id" => $this->getId(),

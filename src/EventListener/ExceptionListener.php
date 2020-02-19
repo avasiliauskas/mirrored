@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\EventListener;
 
@@ -17,7 +17,7 @@ class ExceptionListener
         $this->normalizerFactory = $normalizerFactory;
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
         $request   = $event->getRequest();
@@ -28,7 +28,7 @@ class ExceptionListener
         }
     }
 
-    private function createApiResponse(\Throwable $exception)
+    private function createApiResponse(\Throwable $exception): ApiResponse
     {
         $normalizer = $this->normalizerFactory->getNormalizer($exception);
         $statusCode = $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;

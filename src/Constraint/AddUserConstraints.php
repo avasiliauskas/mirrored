@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Constraint;
 
@@ -12,12 +12,12 @@ class AddUserConstraints implements ConstraintContract
      * @UniqueAssert(entityClass=User::class, field="name")
      * @Assert\NotBlank(message="Password is missing")
      */
-    public $name;
+    public string $name;
 
     /**
      * @Assert\NotBlank(message="Password is missing")
      */
-    public $password;
+    public string $password;
 
     public function __construct($name, $password)
     {
