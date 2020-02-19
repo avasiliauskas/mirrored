@@ -2,7 +2,9 @@
 
 namespace App\Constraint;
 
+use Symfony\Component\Validator\Constraints\Collection;
+
 interface ConstraintContract
 {
-
+    public static function getConstraints(): Collection;
 }

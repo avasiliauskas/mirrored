@@ -6,13 +6,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class DeleteGroupConstraints implements ConstraintContract
 {
-    /**
-     * @Assert\NotBlank(message="Name is missing")
-     */
-    public string $name;
-
-    public function __construct($name)
+    public static function getConstraints(): Assert\Collection
     {
-        $this->name = $name;
+        return new Assert\Collection([
+                'name' => [
+                    new Assert\NotBlank(['message' => 'Name is missing'])
+                ]
+            ]
+        );
     }
 }

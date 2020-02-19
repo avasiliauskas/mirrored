@@ -2,7 +2,6 @@
 
 namespace App\EventListener;
 
-use App\Factory\NormalizerFactory;
 use App\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -10,13 +9,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class ExceptionListener
 {
-    private NormalizerFactory $normalizerFactory;
-
-    public function __construct(NormalizerFactory $normalizerFactory)
-    {
-        $this->normalizerFactory = $normalizerFactory;
-    }
-
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
@@ -30,11 +22,10 @@ class ExceptionListener
 
     private function createApiResponse(\Throwable $exception): ApiResponse
     {
-        $normalizer = $this->normalizerFactory->getNormalizer($exception);
         $statusCode = $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
 
         try {
-            $errors = $normalizer ? $normalizer->normalize($exception) : [];
+            $errors = $exception->getErrors();
         } catch (\Exception $e) {
             $errors = [];
         }

@@ -10,6 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 class UniqueValueInEntityValidator extends ConstraintValidator
 {
     private EntityManagerInterface $em;
+    const ARGUMENT_ERROR_MESSAGE = '"field" parameter should be any scalar type';
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -21,7 +22,7 @@ class UniqueValueInEntityValidator extends ConstraintValidator
         $entityRepository = $this->em->getRepository($constraint->entityClass);
 
         if (!is_scalar($constraint->field)) {
-            throw new InvalidArgumentException('"field" parameter should be any scalar type');
+            throw new InvalidArgumentException(self::ARGUMENT_ERROR_MESSAGE);
         }
 
         $searchResults = $entityRepository->findBy([
@@ -29,8 +30,7 @@ class UniqueValueInEntityValidator extends ConstraintValidator
         ]);
 
         if (count($searchResults) > 0) {
-            $this->context->buildViolation($constraint->message)
-                ->addViolation();
+            $this->context->buildViolation($constraint->message)->addViolation();
         }
     }
 }

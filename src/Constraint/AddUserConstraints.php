@@ -2,26 +2,26 @@
 
 namespace App\Constraint;
 
+use App\Validator\Constraint\UniqueValueInEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraint\UniqueValueInEntity as UniqueAssert;
 use App\Entity\User;
 
 class AddUserConstraints implements ConstraintContract
 {
-    /**
-     * @UniqueAssert(entityClass=User::class, field="name")
-     * @Assert\NotBlank(message="Password is missing")
-     */
-    public string $name;
-
-    /**
-     * @Assert\NotBlank(message="Password is missing")
-     */
-    public string $password;
-
-    public function __construct($name, $password)
+    public static function getConstraints(): Assert\Collection
     {
-        $this->name = $name;
-        $this->password = $password;
+        return new Assert\Collection([
+                'name' => [
+                    new Assert\NotBlank(['message' => 'Name is missing']),
+                    new UniqueValueInEntity([
+                        'field' => 'name',
+                        'entityClass' => User::class,
+                    ])
+                ],
+                'password' => [
+                    new Assert\NotBlank(['message' => 'Password is missing'])
+                ]
+            ]
+        );
     }
 }

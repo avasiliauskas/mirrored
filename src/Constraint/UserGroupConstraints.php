@@ -6,19 +6,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UserGroupConstraints implements ConstraintContract
 {
-    /**
-     * @Assert\NotBlank(message="group name is missing")
-     */
-    public string $groupName;
-
-    /**
-     * @Assert\NotBlank(message="user name is missing")
-     */
-    public string $userName;
-
-    public function __construct($groupName, $userName)
+    public static function getConstraints(): Assert\Collection
     {
-        $this->groupName = $groupName;
-        $this->userName = $userName;
+        return new Assert\Collection([
+                'groupName' => [
+                    new Assert\NotBlank(['message' => 'Group name is missing'])
+                ],
+                'userName' => [
+                    new Assert\NotBlank(['message' => 'User mame is missing'])
+                ]
+            ]
+        );
     }
 }

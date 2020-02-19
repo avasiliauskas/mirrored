@@ -3,19 +3,22 @@
 namespace App\Constraint;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraint\UniqueValueInEntity as UniqueAssert;
+use App\Validator\Constraint\UniqueValueInEntity;
 use App\Entity\Group;
 
 class AddGroupConstraints implements ConstraintContract
 {
-    /**
-     * @Assert\NotBlank(message="Name is missing")
-     * @UniqueAssert(entityClass=Group::class, field="name")
-     */
-    public string $name;
-
-    public function __construct($name)
+    public static function getConstraints(): Assert\Collection
     {
-        $this->name = $name;
+        return new Assert\Collection([
+                'name' => [
+                    new Assert\NotBlank(['message' => 'Name is missing']),
+                    new UniqueValueInEntity([
+                        'field' => 'name',
+                        'entityClass' => Group::class,
+                    ])
+                ]
+            ]
+        );
     }
 }

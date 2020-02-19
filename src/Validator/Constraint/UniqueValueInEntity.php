@@ -5,14 +5,11 @@ namespace App\Validator\Constraint;
 use App\Validator\UniqueValueInEntityValidator;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
 class UniqueValueInEntity extends Constraint
 {
     public string $message = 'This value is already in use';
-    public string $entityClass;
-    public string $field;
+    public $entityClass;
+    public $field;
 
     public function getRequiredOptions(): array
     {
