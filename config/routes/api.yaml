@@ -13,22 +13,28 @@ create_group:
   controller: App\Controller\Api\GroupController::create
   methods: POST
 
-delete_group:
-  path: /group
-  controller: App\Controller\Api\GroupController::delete
-  methods: DELETE
-
 get_groups:
   path: /group
   controller: App\Controller\Api\GroupController::all
   methods: GET
 
+delete_group:
+  path: /group/{id}
+  controller: App\Controller\Api\GroupController::delete
+  methods: DELETE
+  requirements:
+    id: '\d+'
+
 assign_user_to_group:
-  path: /group/assign
+  path: /group/{groupId}/assign
   controller: App\Controller\Api\GroupController::assignUser
   methods: POST
+  requirements:
+    groupId: '\d+'
 
 remove_user_from_group:
-  path: /group/remove
+  path: /group/{groupId}/remove
   controller: App\Controller\Api\GroupController::removeUser
-  methods: POST
+  methods: DELETE
+  requirements:
+    groupId: '\d+'

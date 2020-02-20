@@ -13,7 +13,7 @@ class GroupApiTest extends ApiTestCase
 
         $this->client->request('GET', '/api/v1/group');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertCount(3, json_decode($this->client->getResponse()->getContent()));
+        $this->assertCount(3, json_decode($this->client->getResponse()->getContent())->data);
     }
 
     public function testCreateGroup()
@@ -32,7 +32,7 @@ class GroupApiTest extends ApiTestCase
     {
         $group = $this->createTestGroup('test_group');
 
-        $this->client->request('DELETE', '/api/v1/group', ['name' => $group->getName()]);
+        $this->client->request('DELETE', '/api/v1/group/' . $group->getId());
         $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
 
         $group = $this->getEntityManager()
@@ -52,7 +52,7 @@ class GroupApiTest extends ApiTestCase
             ->getRepository(Group::class)
             ->commit($group);
 
-        $this->client->request('DELETE', '/api/v1/group', ['name' => $group->getName()]);
+        $this->client->request('DELETE', '/api/v1/group/' . $group->getId());
         $this->assertEquals(422, $this->client->getResponse()->getStatusCode());
 
         $group = $this->getEntityManager()
@@ -68,10 +68,9 @@ class GroupApiTest extends ApiTestCase
         $user = $this->createTestUser('user', 'password');
         $user2 = $this->createTestUser('user2', 'password');
 
-        $this->client->request('POST', '/api/v1/group/assign',
+        $this->client->request('POST', '/api/v1/group/' . $group->getId() . '/assign',
             [
-                'userName' => $user->getName(),
-                'groupName' => $group->getName()
+                'userName' => $user->getName()
             ]
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
@@ -84,10 +83,9 @@ class GroupApiTest extends ApiTestCase
 
         $this->assertCount(1, $userList);
 
-        $this->client->request('POST', '/api/v1/group/assign',
+        $this->client->request('POST', '/api/v1/group/' . $group->getId() . '/assign',
             [
-                'userName' => $user2->getName(),
-                'groupName' => $group->getName()
+                'userName' => $user2->getName()
             ]
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
@@ -114,10 +112,9 @@ class GroupApiTest extends ApiTestCase
             ->getRepository(Group::class)
             ->commit($group);
 
-        $this->client->request('POST', '/api/v1/group/remove',
+        $this->client->request('DELETE', '/api/v1/group/' . $group->getId() . '/remove',
             [
                 'userName' => $user->getName(),
-                'groupName' => $group->getName()
             ]
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
@@ -130,10 +127,9 @@ class GroupApiTest extends ApiTestCase
 
         $this->assertCount(1, $userList);
 
-        $this->client->request('POST', '/api/v1/group/remove',
+        $this->client->request('DELETE', '/api/v1/group/' . $group->getId() . '/remove',
             [
-                'userName' => $user2->getName(),
-                'groupName' => $group->getName()
+                'userName' => $user2->getName()
             ]
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Action\AssignUserToGroup;
 use App\Action\CreateGroup;
 use App\Action\DeleteGroup;
 use App\Action\GetGroups;
@@ -9,46 +10,44 @@ use App\Action\RemoveUserFromGroup;
 use App\Constraint\DeleteGroupConstraints;
 use App\Constraint\AddGroupConstraints;
 use App\Constraint\UserGroupConstraints;
-use App\Service\AssignUserToGroup;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class GroupController extends BaseController
 {
-    public function all(GetGroups $action): JsonResponse
+    public function all(GetGroups $action): ApiResponse
     {
-        return $this->json($action->execute());
+        return ApiResponse::create($action->execute());
+
     }
 
-    public function create(Request $request, CreateGroup $action): JsonResponse
+    public function create(Request $request, CreateGroup $action): ApiResponse
     {
         $this->validateRequest($request->request->all(), AddGroupConstraints::getConstraints());
 
         $action->execute($request->get('name'));
-        return $this->json('created', 201);
+        return ApiResponse::create([], 201);
     }
 
-    public function delete(Request $request, DeleteGroup $action): JsonResponse
+    public function delete(int $id, DeleteGroup $action): ApiResponse
     {
-        $this->validateRequest($request->request->all(), DeleteGroupConstraints::getConstraints());
-
-        $action->execute($request->get('name'));
-        return $this->json('deleted!', 204);
+        $action->execute($id);
+        return ApiResponse::create([], 204);
     }
 
-    public function assignUser(Request $request, AssignUserToGroup $action): JsonResponse
+    public function assignUser(int $groupId, Request $request, AssignUserToGroup $action): ApiResponse
     {
         $this->validateRequest($request->request->all(), UserGroupConstraints::getConstraints());
 
-        $action->execute($request->get('userName'), $request->get('groupName'));
-        return $this->json('success');
+        $action->execute($request->get('userName'), $groupId);
+        return ApiResponse::create();
     }
 
-    public function removeUser(Request $request, RemoveUserFromGroup $action): JsonResponse
+    public function removeUser(int $groupId, Request $request, RemoveUserFromGroup $action): ApiResponse
     {
         $this->validateRequest($request->request->all(), UserGroupConstraints::getConstraints());
 
-        $action->execute($request->get('userName'), $request->get('groupName'));
-        return $this->json('success');
+        $action->execute($request->get('userName'), $groupId);
+        return ApiResponse::create();
     }
 }

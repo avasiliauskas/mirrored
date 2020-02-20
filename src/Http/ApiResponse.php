@@ -6,24 +6,31 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiResponse extends JsonResponse
 {
+    const OK_MESSAGE = 'OK';
+
     public function __construct(
-        string $message,
+        array $data = [],
+        string $message = 'OK',
         array $errors = [],
         int $status = 200,
         array $headers = [],
         bool $json = false
     ) {
-        parent::__construct($this->format($message, $errors), $status, $headers, $json);
+        parent::__construct($this->format($data, $message, $errors), $status, $headers, $json);
     }
 
-    private function format(string $message, array $errors = []): array
+    private function format(array $data, string $message, array $errors = []): array
     {
-        $response = ['message' => $message];
+        return [
+            'success' => true,
+            'data' => $data,
+            'message' => $message,
+            'errors' => $errors,
+        ];
+    }
 
-        if ($errors) {
-            $response['errors'] = $errors;
-        }
-
-        return $response;
+    public static function create($data = [], int $status = 200, array $headers = [])
+    {
+        return new static($data, self::OK_MESSAGE, [], $status, $headers);
     }
 }

@@ -5,22 +5,22 @@ namespace App\Controller\Api;
 use App\Action\CreateUser;
 use App\Action\GetUsers;
 use App\Constraint\AddUserConstraints;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends BaseController
 {
-    public function create(Request $request, CreateUser $action): JsonResponse
+    public function create(Request $request, CreateUser $action): ApiResponse
     {
         $this->validateRequest($request->request->all(), AddUserConstraints::getConstraints());
 
         $action->execute($request->get('name'), $request->get('password'));
-        return $this->json('User created!', 201);
+        return ApiResponse::create([], 201);
     }
 
-    public function all(GetUsers $action): JsonResponse
+    public function all(GetUsers $action): ApiResponse
     {
-        return $this->json($action->execute());
+        return ApiResponse::create($action->execute());
     }
 
 }

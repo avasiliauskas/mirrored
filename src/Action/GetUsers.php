@@ -13,7 +13,7 @@ final class GetUsers
         $this->repository = $repository;
     }
 
-    public function execute(): iterable
+    public function execute(): array
     {
         return $this->repository->findAll();
     }

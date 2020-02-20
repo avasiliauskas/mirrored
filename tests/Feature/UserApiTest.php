@@ -13,7 +13,7 @@ class UserApiTest extends ApiTestCase
 
         $this->client->request('GET', '/api/v1/user');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertCount(4, json_decode($this->client->getResponse()->getContent()));
+        $this->assertCount(4, json_decode($this->client->getResponse()->getContent())->data);
     }
 
     public function testAddUser()

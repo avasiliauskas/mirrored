@@ -12,7 +12,7 @@ class ExceptionListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        $request   = $event->getRequest();
+        $request = $event->getRequest();
 
         if (in_array('application/json', $request->getAcceptableContentTypes())) {
             $response = $this->createApiResponse($exception);
@@ -30,6 +30,6 @@ class ExceptionListener
             $errors = [];
         }
 
-        return new ApiResponse($exception->getMessage(), $errors, $statusCode);
+        return new ApiResponse([], $exception->getMessage(), $errors, $statusCode);
     }
 }

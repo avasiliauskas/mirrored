@@ -14,9 +14,9 @@ class DeleteGroup
         $this->groupRepository = $groupRepository;
     }
 
-    public function execute(string $name): void
+    public function execute(int $id): void
     {
-        $group = $this->groupRepository->findOneBy(['name' => $name]);
+        $group = $this->groupRepository->find($id);
 
         if ($group && $group->getUsers()->count()) {
             throw new ApiException(null, 422, ApiException::UNIQUE_VALIDATION_ERROR_MESSAGE);

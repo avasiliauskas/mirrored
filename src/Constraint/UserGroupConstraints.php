@@ -9,9 +9,6 @@ class UserGroupConstraints implements ConstraintContract
     public static function getConstraints(): Assert\Collection
     {
         return new Assert\Collection([
-                'groupName' => [
-                    new Assert\NotBlank(['message' => 'Group name is missing'])
-                ],
                 'userName' => [
                     new Assert\NotBlank(['message' => 'User mame is missing'])
                 ]

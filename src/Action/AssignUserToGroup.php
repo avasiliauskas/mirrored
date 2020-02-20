@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Action;
 
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
@@ -16,9 +16,9 @@ class AssignUserToGroup
         $this->userRepository = $userRepository;
     }
 
-    public function execute(string $userName, string $groupName): void
+    public function execute(string $userName, int $groupId): void
     {
-        $group = $this->groupRepository->findOneBy(['name' => $groupName]);
+        $group = $this->groupRepository->find($groupId);
         $user = $this->userRepository->findOneBy(['name' => $userName]);
 
         $group->assignUser($user);

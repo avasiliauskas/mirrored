@@ -2,14 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Group;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class AppFixtures extends Fixture
+class UserFixtures extends Fixture
 {
+    public const USER_NAME = 'user';
+
     private UserPasswordEncoderInterface $encoder;
 
     public function __construct(UserPasswordEncoderInterface $encoder)
@@ -17,28 +18,16 @@ class AppFixtures extends Fixture
         $this->encoder = $encoder;
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $manager->persist($this->userFactory('admin', 'password', User::ROLE_ADMIN));
 
         foreach (range(0, 10) as $i) {
-            $user = $this->userFactory('user' . $i, 'password', User::ROLE_USER);
-            $group = $this->groupFactory('group' . $i);
-            $group->assignUser($user);
-
+            $user = $this->userFactory(self::USER_NAME . $i, 'password', User::ROLE_USER);
             $manager->persist($user);
-            $manager->persist($group);
         }
 
         $manager->flush();
-    }
-
-    private function groupFactory(string $name): Group
-    {
-        $group = new Group();
-        $group->setName($name);
-
-        return $group;
     }
 
     private function userFactory(string $name, string $password, string $role = null): User
@@ -48,6 +37,8 @@ class AppFixtures extends Fixture
         $password = $this->encoder->encodePassword($user, $password);
         $user->setPassword($password);
         $user->setRoles([$role]);
+
+        $this->addReference($name, $user);
 
         return $user;
     }

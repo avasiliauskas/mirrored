@@ -32,7 +32,7 @@ class UnauthorizedTest extends WebTestCase
 
     public function testDeleteGroupUnauthorized()
     {
-        $this->client->request('DELETE', '/api/v1/group');
+        $this->client->request('DELETE', '/api/v1/group/1');
         $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
     }
 
@@ -44,13 +44,13 @@ class UnauthorizedTest extends WebTestCase
 
     public function testAssignUserToGroupUnauthorized()
     {
-        $this->client->request('POST', '/api/v1/group/assign');
+        $this->client->request('POST', '/api/v1/group/1/assign');
         $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
     }
 
     public function testRemoveUserFromGroupUnauthorized()
     {
-        $this->client->request('POST', '/api/v1/group/remove');
+        $this->client->request('DELETE', '/api/v1/group/1/remove');
         $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
     }
 }

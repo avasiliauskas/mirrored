@@ -16,9 +16,9 @@ class RemoveUserFromGroup
         $this->userRepository = $userRepository;
     }
 
-    public function execute(string $userName, string $groupName): void
+    public function execute(string $userName, int $groupId): void
     {
-        $group = $this->groupRepository->findOneBy(['name' => $groupName]);
+        $group = $this->groupRepository->find($groupId);
         $user = $this->userRepository->findOneBy(['name' => $userName]);
 
         $group->removeUser($user);
